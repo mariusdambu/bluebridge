@@ -1,0 +1,1 @@
+SUBSYSTEM=="sound", KERNEL=="card[0-9]*", ATTRS{idVendor}=="1235", ATTRS{idProduct}=="8211", ATTRS{serial}=="YOUR_SCARLETT_SERIAL", ATTR{id}="BlueBridge"

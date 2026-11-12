@@ -1,0 +1,5 @@
+{
+  "preferred_adapter": "PRIMARY_CONTROLLER_ADDRESS",
+  "adapter": "FALLBACK_CONTROLLER_ADDRESS",
+  "scarlett": {"vendor": "1235", "product": "8211", "serial": "YOUR_SCARLETT_SERIAL"}
+}

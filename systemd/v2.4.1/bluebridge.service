@@ -1,0 +1,40 @@
+[Unit]
+Description=BlueBridge pairing approval and cached status
+Wants=bluetooth.service bluealsa.service bluealsa-aplay.service
+After=dbus.service bluetooth.service bluealsa.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/bluebridge/controller.py
+ExecStopPost=/usr/bin/python3 /opt/bluebridge/controller.py --close
+Restart=always
+RestartSec=10
+TimeoutStopSec=15
+RuntimeDirectory=bluebridge
+RuntimeDirectoryMode=0700
+StateDirectory=bluebridge
+StateDirectoryMode=0700
+UMask=0077
+User=root
+SupplementaryGroups=audio
+CapabilityBoundingSet=
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=false
+DevicePolicy=closed
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryMax=128M
+TasksMax=24
+LogRateLimitIntervalSec=30s
+LogRateLimitBurst=30
+
+[Install]
+WantedBy=multi-user.target
