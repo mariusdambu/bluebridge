@@ -24,3 +24,9 @@ El slider permite un ajuste de 1 %. Se conserva la curva de amplitud y la separa
 Realtek confirmó un cambio en 127 ms desde la petición al backend hasta la lectura ALSA, con la preferencia original restaurada después. La latencia audible no se midió. La tarjeta muestra la salida seleccionada y su slider. Los estados secundarios y la desconexión quedan en un desplegable inicialmente cerrado. Los controles sin capacidad confirmada se deshabilitan. El estado activo exige adaptador y salida preparados, con estado reciente del reproductor. El indicador de flujo digital no certifica que se oigan los altavoces.
 
 La verificación de los hashes del respaldo y su contenido acredita integridad. Falta probar una restauración completa en otro sistema.
+
+## Candidato v2.4.2. Inicialización de Scarlett
+
+Si la Scarlett aparece por USB pero su PCM ALSA tarda en estar listo, se le conceden seis segundos desde la primera detección del retraso. Si Realtek ya está seleccionada, se mantiene activa durante la espera. Si la Scarlett está ausente, Realtek se selecciona de inmediato. Después de una espera o con Realtek seleccionada, el PCM de Scarlett debe mantenerse disponible durante cuatro segundos antes de cambiar. Se usa el sondeo existente, por lo que el cambio se aplica en la siguiente comprobación. Al cambiar de salida puede haber una interrupción breve del audio.
+
+Se probaron estos casos con USB y ALSA simulados en Linux, incluidos los cambios intermitentes de disponibilidad y la exclusión de HDMI. Pasaron las 56 pruebas. En el NAS, con Scarlett ausente, el reproductor actualizado arrancó en Realtek con el mismo nivel aplicado y el archivo de volúmenes intacto. La recuperación con una Scarlett física y el audio audible quedan pendientes de una reconexión normal. La prueba no requiere provocar un fallo de xHCI.

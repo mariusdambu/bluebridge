@@ -16,6 +16,51 @@ PROFILES = '/etc/bluebridge/professional_usb.json'
 running = True
 
 
+class ScarlettFallback:
+    """Allow ALSA to initialize, then hold analog audio until USB is stable."""
+
+    INITIAL_GRACE = 6
+    READY_STABILITY = 4
+
+    def __init__(self):
+        self.on_realtek = False
+        self.wait_since = None
+        self.ready_since = None
+        self.ready_identity = None
+
+    def choose(self, preferred, candidates, now):
+        realtek = next((card for card in candidates
+                        if card['id'] == 'integrated' and card['ready']), None)
+        if preferred['id'] != 'scarlett' or realtek is None:
+            self.on_realtek = preferred['id'] == 'integrated' and preferred['ready']
+            self.wait_since = self.ready_since = self.ready_identity = None
+            return preferred
+
+        if preferred['ready']:
+            if not self.on_realtek and self.wait_since is None:
+                return preferred
+            identity = (preferred['card'], preferred['device'], preferred['generation'])
+            if identity != self.ready_identity:
+                self.ready_identity = identity
+                self.ready_since = now
+            if now - self.ready_since >= self.READY_STABILITY:
+                self.on_realtek = False
+                self.wait_since = self.ready_since = self.ready_identity = None
+                return preferred
+        else:
+            self.ready_since = self.ready_identity = None
+            if self.wait_since is None:
+                self.wait_since = now
+
+        grace_expired = self.wait_since is not None and now - self.wait_since >= self.INITIAL_GRACE
+        if self.on_realtek or grace_expired:
+            self.on_realtek = True
+            return realtek
+        if preferred['ready']:
+            return dict(preferred, ready=False, pcm=None, reason='Estabilizando Scarlett en ALSA')
+        return preferred
+
+
 class VolumeWakeup:
     """Event-driven volume wakeup; two-second polling remains the fallback."""
     def __init__(self, path='/run/bluebridge-player/volume.sock'):
@@ -140,6 +185,7 @@ def main():
     delay = 5
     started = 0
     error = ''
+    output_policy = ScarlettFallback()
     recovery = XrunRecovery()
     stalled = StallDetector()
     wakeup = VolumeWakeup()
@@ -157,7 +203,8 @@ def main():
         while running:
             try:
                 profiles = load_profiles()
-                current, candidates = discover_outputs(settings, profiles)
+                preferred, candidates = discover_outputs(settings, profiles)
+                current = output_policy.choose(preferred, candidates, time.monotonic())
                 profile_error = ''
             except (ValueError, TypeError, KeyError, OSError) as exc:
                 # Never replace a working device with an unvalidated new profile.
