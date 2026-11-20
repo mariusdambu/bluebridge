@@ -1,13 +1,13 @@
 # BlueBridge
 
-Receptor Bluetooth A2DP para Debian 13 con BlueZ, BlueALSA y ALSA. Funciona con systemd y puede integrarse como tarjeta en un dashboard autenticado.
+Bluetooth A2DP audio receiver for Debian 13 with BlueZ, BlueALSA, and ALSA. Runs under systemd and can be integrated as a card inside an authenticated dashboard.
 
-El controlador selecciona el adaptador principal y mantiene el secundario en reserva. El reproductor utiliza la Scarlett Solo cuando está disponible y pasa a la salida analógica integrada si se retira. Las salidas HDMI y DisplayPort quedan excluidas. El volumen base se guarda por tarjeta y el teléfono regula su propio nivel.
+The controller selects the primary Bluetooth adapter and keeps the secondary adapter in reserve. The player routes audio to the Scarlett Solo when available and falls back to the integrated analog output if unplugged or if ALSA initialization stalls. HDMI and DisplayPort outputs are excluded. Base volume is stored per card while the phone regulates its own level independently.
 
-- [Instalación e integración](docs/INSTALACION.md)
-- [Copia, restauración y rollback](docs/RECUPERACION.md)
-- [Pruebas y alcance de la versión](docs/VALIDACION.md)
+- [Installation and integration](docs/INSTALLATION.md)
+- [Backup, recovery, and rollback](docs/RECOVERY.md)
+- [Validation and release scope](docs/VALIDATION.md)
 
-En el teléfono, selecciona **Yamaha HS4 Wireless** y reproduce desde la aplicación habitual. Un solo cliente conserva la conexión de audio. Para cambiar de fuente, desconéctalo desde sus ajustes Bluetooth o desde los controles avanzados del dashboard.
+On your phone, select **Yamaha HS4 Wireless** and play from your usual audio app. A single client holds the audio connection at a time. To switch sources, disconnect the active client from its Bluetooth settings or from the dashboard's advanced controls.
 
-La versión estable de referencia es **v2.4.1**. La matriz de validación distingue el uso confirmado de los escenarios de fallo que aún carecen de prueba específica. El proyecto se distribuye con licencia MIT.
+The current stable release is **v2.4.2** (with `v2.4.1` preserved intact as the previous stable baseline). The validation matrix distinguishes confirmed usage from failure scenarios that still lack dedicated testing. Distributed under the MIT License.
